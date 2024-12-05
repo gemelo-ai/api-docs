@@ -86,26 +86,26 @@ This more advanced technique allows you to start a **two-way**, **WebSockets**-b
 To use, it, call the `sdk.TTS.StartDuplexStream` method:
 
 ```go
-func StartDuplexStream(ctx context.Context, voiceID int) (\*DuplexStream, error)
+func StartDuplexStream(ctx context.Context, voiceID int) (*DuplexStream, error)
 ```
 
 The method also returns a set of functions to control the stream:
 
 ```go
 // Read returns the raw audio data converted by the server
-func (v \*DuplexStream) Read() ([]byte, error)
+func (v *DuplexStream) Read() ([]byte, error)
 
 // Convert asynchronously feeds the stream with the text to be converted to audio
-func (v \*DuplexStream) Convert(text string) error
+func (v *DuplexStream) Convert(text string) error
 
 // Wait will block the execution until there was 5 seconds of stream inactivity
-func (v \*DuplexStream) Wait()
+func (v *DuplexStream) Wait()
 
 // Close requests the server to close the connection gracefully
-func (v \*DuplexStream) Close()
+func (v *DuplexStream) Close()
 
 // Terminate ends the stream immediately. In most cases we advise to use Close() instead.
-func (v \*DuplexStream) Terminate()
+func (v *DuplexStream) Terminate()
 ```
 
 Example usage:
