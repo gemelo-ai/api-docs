@@ -25,6 +25,8 @@ To get your key, please visit our [Gemelo Platform](https://app.gemelo.ai) and m
 
 ## 3. API Reference
 
+> ℹ️ Our experimental video api is out! It's not yet available in out general API Documentation. Please check the [Video API docs page](video/api.md) for more details end examples.
+
 Our complete API reference is available through Swagger and hosted on GitHub Pages. This documentation provides detailed information about the endpoints, request and response structures, error codes, and examples for integrating with our API.
 
 To explore the API and try out requests directly in the browser, visit the API reference at:
@@ -55,7 +57,7 @@ Before you request TTS or VC, you have to query the available voices first, and 
 
 ### 4.1. Video API Examples
 
-TBA
+Please check the [Video API docs page](video/api.md) for more details end examples.
 
 ### 4.2. Text-to-Speech Example
 
