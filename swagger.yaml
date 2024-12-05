@@ -1,0 +1,348 @@
+basePath: /
+definitions:
+  gateway.VoiceLabel:
+    properties:
+      category:
+        type: string
+      label:
+        type: string
+    type: object
+  models.VoiceType:
+    enum:
+    - system
+    - cloned
+    type: string
+    x-enum-varnames:
+    - VoiceTypeSystem
+    - VoiceTypeCloned
+  null.String:
+    properties:
+      string:
+        type: string
+      valid:
+        type: boolean
+    type: object
+  tts.convertTextDto:
+    properties:
+      save:
+        type: boolean
+      text:
+        type: string
+      voiceId:
+        type: integer
+      voiceType:
+        $ref: '#/definitions/models.VoiceType'
+    type: object
+  tts.voiceDto:
+    properties:
+      description:
+        type: string
+      disabled:
+        type: boolean
+      id:
+        type: integer
+      labels:
+        items:
+          $ref: '#/definitions/gateway.VoiceLabel'
+        type: array
+      name:
+        type: string
+      new:
+        type: boolean
+      previewUrl:
+        allOf:
+        - $ref: '#/definitions/null.String'
+        description: '@deprecated'
+      previewUrls:
+        items:
+          type: string
+        type: array
+      rating:
+        type: number
+      voiceTier:
+        type: string
+    type: object
+  vc.voiceDto:
+    properties:
+      description:
+        type: string
+      disabled:
+        type: boolean
+      id:
+        type: integer
+      labels:
+        items:
+          $ref: '#/definitions/gateway.VoiceLabel'
+        type: array
+      name:
+        type: string
+      new:
+        type: boolean
+      previewUrl:
+        allOf:
+        - $ref: '#/definitions/null.String'
+        description: '@deprecated'
+      previewUrls:
+        items:
+          type: string
+        type: array
+      rating:
+        type: number
+      voiceTier:
+        type: string
+    type: object
+  voice.publicVoiceDto:
+    properties:
+      description:
+        type: string
+      disabled:
+        type: boolean
+      id:
+        type: integer
+      imageKey:
+        type: string
+      labels:
+        items:
+          $ref: '#/definitions/gateway.VoiceLabel'
+        type: array
+      name:
+        type: string
+      new:
+        type: boolean
+      previewUrl:
+        allOf:
+        - $ref: '#/definitions/null.String'
+        description: '@deprecated'
+      previewUrls:
+        items:
+          type: string
+        type: array
+      rating:
+        type: number
+      voiceTier:
+        type: string
+    type: object
+  voice_cloned.UpdateVoiceCloneDto:
+    properties:
+      name:
+        type: string
+    type: object
+  voice_cloned.VoiceClonedDto:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      imageUrl:
+        type: string
+      name:
+        type: string
+      previewUrls:
+        items:
+          type: string
+        type: array
+    type: object
+host: api.gemelo.ai
+info:
+  contact: {}
+  description: gemelo.ai API documentation
+  title: gemelo.ai API
+  version: 1.0.0
+paths:
+  /v1/cloned-voices:
+    get:
+      description: Returns all cloned voices
+      parameters:
+      - description: Max records per request
+        in: query
+        name: limit
+        type: integer
+      - description: Page indicator ('next' and 'prev' fields in the response)
+        in: query
+        name: cursor
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/voice_cloned.VoiceClonedDto'
+            type: array
+      security:
+      - ClientKey: []
+      - ApiKey: []
+      tags:
+      - Voice cloning
+    post:
+      consumes:
+      - multipart/form-data
+      description: Creates new cloned voice
+      parameters:
+      - description: .wav file (up to 60s / 32MB)
+        in: formData
+        name: audio
+        required: true
+        type: file
+      - description: Cloned voice name
+        in: formData
+        name: name
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/voice_cloned.VoiceClonedDto'
+      security:
+      - ClientKey: []
+      - ApiKey: []
+      tags:
+      - Voice cloning
+  /v1/cloned-voices/{clonedVoiceID}:
+    delete:
+      description: Deletes the cloned voice
+      parameters:
+      - description: Cloned Voice ID
+        in: path
+        name: clonedVoiceID
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+      security:
+      - ClientKey: []
+      - ApiKey: []
+      tags:
+      - Voice cloning
+    patch:
+      description: Updates the cloned voice
+      parameters:
+      - description: Cloned Voice ID
+        in: path
+        name: clonedVoiceID
+        required: true
+        type: integer
+      - description: Voice cloning update input
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/voice_cloned.UpdateVoiceCloneDto'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/voice_cloned.VoiceClonedDto'
+      security:
+      - ClientKey: []
+      - ApiKey: []
+      tags:
+      - Voice cloning
+  /v1/tts/convert:
+    post:
+      description: Converts text to speech audio file
+      parameters:
+      - description: TTS input
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/tts.convertTextDto'
+      responses:
+        "200":
+          description: Binary audio file
+          schema:
+            type: file
+      security:
+      - ClientKey: []
+      - ApiKey: []
+      tags:
+      - Text to speech
+  /v1/tts/voices:
+    get:
+      description: Returns all voices available for the Text to speech
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/tts.voiceDto'
+            type: array
+      security:
+      - ClientKey: []
+      - ApiKey: []
+      tags:
+      - Text to speech
+  /v1/vc/convert:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Converts voice in the uploaded audio file
+      parameters:
+      - description: .wav file to convert
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: VoiceID
+        in: query
+        name: voiceId
+        required: true
+        type: integer
+      - description: Voice type (system/cloned)
+        in: query
+        name: voiceType
+        type: string
+      responses:
+        "200":
+          description: Binary audio file
+          schema:
+            type: file
+      security:
+      - ClientKey: []
+      - ApiKey: []
+      tags:
+      - Voice conversion
+  /v1/vc/voices:
+    get:
+      description: Returns all voices available for the Voice Conversion
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/vc.voiceDto'
+            type: array
+      security:
+      - ClientKey: []
+      - ApiKey: []
+      tags:
+      - Voice conversion
+  /v1/voices:
+    get:
+      description: Returns all system voices available for TTS and VC
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/voice.publicVoiceDto'
+            type: array
+      security:
+      - ClientKey: []
+      - ApiKey: []
+      tags:
+      - Voice conversion
+schemes:
+- https
+securityDefinitions:
+  ApiKey:
+    in: header
+    name: X-API-Key
+    type: apiKey
+  ClientKey:
+    in: header
+    name: X-Client-Key
+    type: apiKey
+swagger: "2.0"
